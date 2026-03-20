@@ -13,6 +13,6 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE 443
 
-CMD ["sh", "-c", "gunicorn job_board.wsgi:application --bind 0.0.0.0:8000 --workers 2"]
+CMD ["sh", "-c", "gunicorn job_board.wsgi:application --bind 0.0.0.0:443 --workers 2"]
