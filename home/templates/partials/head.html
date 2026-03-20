@@ -1,0 +1,24 @@
+{% load static %}
+{% if page_title %}
+    <title>{{ page_title }}</title>
+{% else %}
+    <title>Workaholic Place - Find Your Dream Job</title>
+{% endif %}
+<link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Playfair+Display:wght@700&amp;display=swap"
+      rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="{% static 'dist/output.css' %}" rel="stylesheet"/>
+<script>
+    function toggleMode() {
+        document.documentElement.classList.toggle('dark');
+    }
+
+    {% if head_variant == 'auth' %}
+    function toggleProfile() {
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.classList.toggle('hidden');
+    }
+    {% endif %}
+</script>
+
