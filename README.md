@@ -37,3 +37,10 @@ python manage.py runserver
 cp .env.example .env  # remplir les variables
 docker compose up
 ```
+## screenshot
+
+Offre emploi :
+![alt text](image.png)
+
+Fichier css :
+![alt text](image-1.png)
