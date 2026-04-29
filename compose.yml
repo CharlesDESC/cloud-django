@@ -1,9 +1,7 @@
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: django-job-board:latest
+    env_file:
+      - .env
     ports:
-      - "80:443"
-    env_file: .env
-    
+      - "8000:8000"

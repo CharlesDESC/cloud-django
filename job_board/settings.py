@@ -28,8 +28,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
+    "localhost",
     os.getenv("APP_DOMAIN", "localhost"),
 ]
+
+_trusted_origins = [f"https://{os.getenv('APP_DOMAIN')}"] if os.getenv("APP_DOMAIN") else []
+_trusted_origins += ["http://localhost", "http://127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = _trusted_origins
 
 
 # Application definition
@@ -41,12 +46,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'home',  # Ajouter l'app home pour que Django trouve les templates
-    'jobs',  # Ajouter l'app home pour que Django trouve les templates
+    'storages',
+    'home',
+    'jobs',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -81,8 +88,15 @@ WSGI_APPLICATION = 'job_board.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME', 'jobboard'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
+        'OPTIONS': {
+            'sslmode': os.getenv('DB_SSLMODE', 'require'),
+        },
     }
 }
 
@@ -121,14 +135,31 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files (User uploads - images, CVs, etc.)
-MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# ── Azure Blob Storage (production) ou stockage local (développement) ──────────
+_AZURE_ACCOUNT = os.environ.get('STORAGE_ACCOUNT_NAME')
+_AZURE_KEY = os.environ.get('STORAGE_ACCOUNT_KEY')
+USE_AZURE = bool(_AZURE_ACCOUNT and _AZURE_KEY)
+
+if USE_AZURE:
+    STATIC_URL = f'https://{_AZURE_ACCOUNT}.blob.core.windows.net/static/'
+    MEDIA_URL = f'https://{_AZURE_ACCOUNT}.blob.core.windows.net/media/'
+    STORAGES = {
+        'default': {
+            'BACKEND': 'custom_azure.AzureMediaStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+        },
+    }
+else:
+    STATIC_URL = '/static/'
+    MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
