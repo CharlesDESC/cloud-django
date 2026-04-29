@@ -1,21 +1,39 @@
-# Création et démarrage de l'environnement virtuel
-```python3 -m venv .env```
-## Sous linux
-```source .env/bin/activate```
-## Sous Windows
-```.\venv\Scripts\activate```
+# Django Job Board
 
-# Installer les dépendances backend
-```pip install -r requirements.txt```
+Plateforme d'offres d'emploi développée avec Django, permettant aux entreprises de publier des offres et aux candidats de postuler.
 
-# Installer les dépendances frontend
-```npm install```
+**URL de production :** https://django.blackriver-480616a2.switzerlandnorth.azurecontainerapps.io
 
-# Build front
-```npm run build:css```
+## Stack technique
 
-# Jouer les migrations de BDD
-```python manage.py migrate```
+- **Backend** : Django 5.2 + PostgreSQL
+- **Frontend** : Tailwind CSS
+- **Stockage** : Azure Blob Storage
+- **Déploiement** : Azure Container Apps + Azure Container Registry
 
-# Démarrer le server
-```python manage.py runserver```
+## Lancer en local (sans Docker)
+
+```bash
+# Créer et activer l'environnement virtuel
+python3 -m venv .venv
+source .venv/bin/activate        # Linux/Mac
+.\.venv\Scripts\activate         # Windows
+
+# Installer les dépendances
+pip install -r requirements.txt
+npm install
+
+# Build CSS
+npm run build:css
+
+# Migrations et démarrage
+python manage.py migrate
+python manage.py runserver
+```
+
+## Lancer en local (Docker)
+
+```bash
+cp .env.example .env  # remplir les variables
+docker compose up
+```
